@@ -84,3 +84,13 @@ query 와 resolver를 작성 해 주고 localhost:4000으로 접속하면 graphq
 
 GraphQL 서버와 REST API를 함께 사용해보자!
 > GraphQL을 가지고 어떻게 REST API를 감쌀까.. 잘 생각해보자.
+
+
+
+## Query 
+데이터 요청 - 그래프큐엘에서 쿼리는 Select라고 생각
+
+## Mutation
+데이터 변경
+
+
