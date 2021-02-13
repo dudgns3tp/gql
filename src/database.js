@@ -11,9 +11,7 @@ const database = {
 Object.keys(database).forEach((key) => {
   database[key] = [
     ...database[key],
-    ...csvToJson
-      .fieldDelimiter(",")
-      .getJsonFromCsv(`../data-in-csv/${key}.csv`),
+    ...csvToJson.fieldDelimiter(",").getJsonFromCsv(`./data-in-csv/${key}.csv`),
   ];
   if (database[key].length > 0) {
     const firstItem = database[key][0];

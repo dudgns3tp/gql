@@ -1,0 +1,24 @@
+{
+  "name": "gql",
+  "version": "1.0.0",
+  "description": "## GraphQL 용어 정리",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon ./src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dudgns3tp/gql.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dudgns3tp/gql/issues"
+  },
+  "homepage": "https://github.com/dudgns3tp/gql#readme",
+  "dependencies": {
+    "apollo-server": "^2.21.0",
+    "convert-csv-to-json": "^1.3.0"
+  }
+}
