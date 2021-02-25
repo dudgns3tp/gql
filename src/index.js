@@ -1,32 +1,12 @@
-import { ApolloServer, gql } from 'apollo-server';
+import { ApolloServer } from 'apollo-server';
+import queries from './graphql/schema/_queries.js';
+import mutation from './graphql/schema/_mutations.js';
+import boardTypeDefs from './graphql/schema/board.js';
+import boardReslovers from './graphql/resolver/board.js';
 
-const books = [
-  {
-    title: 'The Awakening',
-    author: 'Kate Chopin',
-  },
-  {
-    title: 'City of Glass',
-    author: 'Paul Auster',
-  },
-];
+const typeDefs = [queries, mutation, boardTypeDefs];
 
-const typeDefs = gql`
-  type Book {
-    title: String
-    author: String
-  }
-
-  type Query {
-    books: [Book]
-  }
-`;
-
-const resolvers = {
-  Query: {
-    books: () => books,
-  },
-};
+const resolvers = [boardReslovers];
 
 const server = new ApolloServer({ typeDefs, resolvers });
 
