@@ -1,4 +1,9 @@
-import { boards, setBoards, getBoardsCount, addBoard } from '../../db.js';
+import {
+    boards,
+    setBoards,
+    getBoardsCount,
+    pushBoard,
+} from '../../db/boardDB.js';
 import dayjs from 'dayjs';
 
 const resolvers = {
@@ -15,7 +20,7 @@ const resolvers = {
                 updatedAt: dayjs().format('YYYY-MM-DD hh:mm:ss'),
                 ...args,
             });
-            addBoard(board);
+            pushBoard(board);
             return board;
         },
         deleteBoard: (parent, args) => {
@@ -23,13 +28,11 @@ const resolvers = {
             const deleted = boards.filter((board) => {
                 return board.id === args.id;
             })[DELETED_ITEM];
-
             setBoards(
                 boards.filter((board) => {
                     return board.id != args.id;
                 })
             );
-
             return deleted;
         },
         updateBoard: (parent, args) => {
@@ -39,9 +42,7 @@ const resolvers = {
             })[UPDATED_ITEM];
 
             boards
-                .filter((board) => {
-                    return board.id === args.id;
-                })
+                .filter((board) => board.id === args.id)
                 .map((board) => {
                     updated = Object.assign(board, {
                         ...args,

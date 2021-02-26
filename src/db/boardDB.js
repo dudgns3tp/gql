@@ -25,9 +25,9 @@ const getBoardsCount = () => {
     return boards[boards.length - 1].id + 1;
 };
 
-const addBoard = (board) => {
+const pushBoard = (board) => {
     boards.push(board);
 };
 
-export { boards, setBoards, getBoardsCount, addBoard };
-export default { boards, setBoards, getBoardsCount, addBoard };
+export { boards, setBoards, getBoardsCount, pushBoard };
+export default { boards, setBoards, getBoardsCount, pushBoard };
