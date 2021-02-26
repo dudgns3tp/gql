@@ -12,8 +12,8 @@ let boards = [
         title: '제목',
         content: '게시글',
         author: '작성자',
-        createdAt: '2021-02-25: 09:50:34',
-        updatedAt: '2021-02-25: 10:50:34',
+        createdAt: '2021-02-25 09:50:34',
+        updatedAt: '2021-02-25 10:50:34',
     },
 ];
 

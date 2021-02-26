@@ -14,7 +14,6 @@ const resolvers = {
                 ...args,
             });
             addBoard(board);
-
             return board;
         },
         deleteBoard: (parent, args) => {
@@ -22,6 +21,7 @@ const resolvers = {
             const deleted = boards.filter((board) => {
                 return board.id === args.id;
             })[DELETED_ITEM];
+
             setBoards(
                 boards.filter((board) => {
                     return board.id != args.id;
@@ -29,6 +29,25 @@ const resolvers = {
             );
 
             return deleted;
+        },
+        updateBoard: (parent, args) => {
+            const UPDATED_ITEM = 0;
+            let updated = boards.filter((board) => {
+                return board.id === args.id;
+            })[UPDATED_ITEM];
+
+            boards
+                .filter((board) => {
+                    return board.id === args.id;
+                })
+                .map((board) => {
+                    updated = Object.assign(board, {
+                        ...args,
+                        updatedAt: dayjs().format('YYYY-MM-DD hh:mm:ss'),
+                    });
+                });
+
+            return updated;
         },
     },
 };
