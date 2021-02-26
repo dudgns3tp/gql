@@ -4,6 +4,8 @@ import dayjs from 'dayjs';
 const resolvers = {
     Query: {
         boards: () => boards,
+        board: (parent, args) =>
+            boards.filter((board) => board.id === args.id)[0],
     },
     Mutation: {
         addBoard: (parent, args) => {
