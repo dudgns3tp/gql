@@ -1,12 +1,12 @@
 import { ApolloServer } from 'apollo-server';
 import queries from './graphql/schema/_queries.js';
-import mutation from './graphql/schema/_mutations.js';
+import mutations from './graphql/schema/_mutations.js';
 import boardTypeDefs from './graphql/schema/board.js';
 import boardResolvers from './graphql/resolver/board.js';
 import userResolvers from './graphql/resolver/user.js';
 import userTypeDefs from './graphql/schema/user.js';
 
-const typeDefs = [queries, mutation, boardTypeDefs, userTypeDefs];
+const typeDefs = [queries, mutations, boardTypeDefs, userTypeDefs];
 
 const resolvers = [boardResolvers, userResolvers];
 
