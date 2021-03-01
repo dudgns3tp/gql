@@ -5,6 +5,10 @@ const resolvers = {
     Query: {
         boards: async () => await boardSchema.find(),
         board: async (parent, args) => await boardSchema.findOne(args),
+        searchBoardsByTitle: async (parent, args) => {
+            const query = new RegExp(args.title);
+            return await boardSchema.find({ title: query });
+        },
     },
     Mutation: {
         addBoard: async (parent, args) =>
