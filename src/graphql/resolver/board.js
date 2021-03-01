@@ -15,12 +15,7 @@ const resolvers = {
             await board.save();
             return board;
         },
-        deleteBoard: async (parent, args) => {
-            console.log(args);
-            const deletedBoard = await boardSchema.deleteOne(args);
-            console.log(deletedBoard);
-            return deletedBoard;
-        },
+        deleteBoard: async (parent, args) => await boardSchema.deleteOne(args),
         updateBoard: (parent, args) => {
             const UPDATED_ITEM = 0;
             let updated = boards.filter((board) => {
