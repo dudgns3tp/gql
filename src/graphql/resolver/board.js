@@ -19,17 +19,11 @@ const resolvers = {
             await board.save();
             return board;
         },
-        deleteBoard: (parent, args) => {
-            const DELETED_ITEM = 0;
-            const deleted = boards.filter((board) => {
-                return board.id === args.id;
-            })[DELETED_ITEM];
-            setBoards(
-                boards.filter((board) => {
-                    return board.id != args.id;
-                })
-            );
-            return deleted;
+        deleteBoard: async (parent, args) => {
+            console.log(args);
+            const deletedBoard = await boardSchema.deleteOne(args);
+            console.log(deletedBoard);
+            return deletedBoard;
         },
         updateBoard: (parent, args) => {
             const UPDATED_ITEM = 0;
