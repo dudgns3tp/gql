@@ -7,13 +7,8 @@ const resolvers = {
         board: async (parent, args) => await boardSchema.findOne(args),
     },
     Mutation: {
-        addBoard: async (parent, args) => {
-            const board = new boardSchema({
-                ...args,
-            });
-            await board.save();
-            return board;
-        },
+        addBoard: async (parent, args) =>
+            await new boardSchema({ ...args }).save(),
         deleteBoard: async (parent, args) =>
             await boardSchema.findByIdAndDelete(args),
         updateBoard: async (parent, args) => {
