@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import dayjs from 'dayjs';
 
 const boardSchema = new mongoose.Schema({
     title: { type: String, required: true },
