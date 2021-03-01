@@ -1,9 +1,5 @@
-import {
-    boards,
-    setBoards,
-    getBoardsCount,
-    pushBoard,
-} from '../../db/boardDB.js';
+import { boards, setBoards } from '../../db/boardDB.js';
+import boardSchema from '../../model/board.js';
 import dayjs from 'dayjs';
 
 const resolvers = {
@@ -13,14 +9,11 @@ const resolvers = {
             boards.filter((board) => board.id === args.id)[0],
     },
     Mutation: {
-        addBoard: (parent, args) => {
-            const board = Object.assign({
-                id: getBoardsCount(),
-                createdAt: dayjs().format('YYYY-MM-DD hh:mm:ss'),
-                updatedAt: dayjs().format('YYYY-MM-DD hh:mm:ss'),
+        addBoard: async (parent, args) => {
+            const board = new boardSchema({
                 ...args,
             });
-            pushBoard(board);
+            await board.save();
             return board;
         },
         deleteBoard: (parent, args) => {

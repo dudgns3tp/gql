@@ -5,7 +5,8 @@ import boardTypeDefs from './graphql/schema/board.js';
 import boardResolvers from './graphql/resolver/board.js';
 import userResolvers from './graphql/resolver/user.js';
 import userTypeDefs from './graphql/schema/user.js';
-
+import dbConnect from './model/index.js';
+dbConnect();
 const typeDefs = [queries, mutations, boardTypeDefs, userTypeDefs];
 
 const resolvers = [boardResolvers, userResolvers];
