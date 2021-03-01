@@ -3,7 +3,7 @@ import { gql } from 'apollo-server';
 const typeDefs = gql`
     type Query {
         boards: [Board]
-        board(id: Int!): Board
+        board(_id: String!): Board
         users: [User]
     }
 `;

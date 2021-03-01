@@ -4,12 +4,8 @@ import dayjs from 'dayjs';
 
 const resolvers = {
     Query: {
-        boards: () => {
-            const boards = boardSchema.find();
-            return boards;
-        },
-        board: (parent, args) =>
-            boards.filter((board) => board.id === args.id)[0],
+        boards: async () => await boardSchema.find(),
+        board: async (parent, args) => await boardSchema.findOne(args),
     },
     Mutation: {
         addBoard: async (parent, args) => {
