@@ -1,4 +1,3 @@
-import { boards, setBoards } from '../../db/boardDB.js';
 import boardSchema from '../../model/board.js';
 import dayjs from 'dayjs';
 
@@ -16,22 +15,14 @@ const resolvers = {
             return board;
         },
         deleteBoard: async (parent, args) => await boardSchema.deleteOne(args),
-        updateBoard: (parent, args) => {
-            const UPDATED_ITEM = 0;
-            let updated = boards.filter((board) => {
-                return board.id === args.id;
-            })[UPDATED_ITEM];
-
-            boards
-                .filter((board) => board.id === args.id)
-                .map((board) => {
-                    updated = Object.assign(board, {
-                        ...args,
-                        updatedAt: dayjs().format('YYYY-MM-DD hh:mm:ss'),
-                    });
-                });
-
-            return updated;
+        updateBoard: async (parent, args) => {
+            const { _id, ...updateArgs } = args;
+            updateArgs.updatedAt = dayjs().format('YYYY-MM-DD hh:mm:ss');
+            return await boardSchema.findByIdAndUpdate(
+                _id,
+                { $set: updateArgs },
+                { new: true }
+            );
         },
     },
 };
