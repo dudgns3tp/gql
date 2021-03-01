@@ -14,7 +14,8 @@ const resolvers = {
             await board.save();
             return board;
         },
-        deleteBoard: async (parent, args) => await boardSchema.deleteOne(args),
+        deleteBoard: async (parent, args) =>
+            await boardSchema.findByIdAndDelete(args),
         updateBoard: async (parent, args) => {
             const { _id, ...updateArgs } = args;
             updateArgs.updatedAt = dayjs().format('YYYY-MM-DD hh:mm:ss');
