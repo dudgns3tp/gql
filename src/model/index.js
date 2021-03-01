@@ -15,6 +15,6 @@ export default function () {
     const db = mongoose.connection;
     db.on('error', console.error.bind(console, 'connection error:'));
     db.once('open', function () {
-        console.log('데이터베이스 연결 성공.');
+        console.log('🚀  Mongodb ready');
     });
 }

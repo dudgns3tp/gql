@@ -4,7 +4,6 @@ const typeDefs = gql`
     type Query {
         boards: [Board]
         board(_id: String!): Board
-        users: [User]
     }
 `;
 
