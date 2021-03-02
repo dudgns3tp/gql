@@ -2,9 +2,13 @@ import Board from '../../model/board.js';
 
 const resolvers = {
     Query: {
-        getBoards: async (_, args) =>
-            await Board.getSortedBoards(args.sort || 'recent'),
+        getBoards: async (_, args) => {
+            return await Board.getSortedBoards(args);
+        },
         getBoard: async (_, args) => await Board.findOne(args),
+        testBoards: async () => {
+            return await Board.find().sort({ like: 'desc' });
+        },
         searchBoards: async (_, args) => await Board.searchBoards(args),
     },
     Mutation: {

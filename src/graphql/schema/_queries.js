@@ -5,6 +5,7 @@ const typeDefs = gql`
         getBoards(sort: sortingTypes): [Board]
         getBoard(_id: String!): Board
         searchBoards(title: String, author: String, content: String): [Board]
+        testBoards: [Board]
     }
 `;
 

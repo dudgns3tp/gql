@@ -48,18 +48,20 @@ boardSchema.statics.addDislike = async function (_id) {
     });
 };
 
-boardSchema.statics.getSortedBoards = async function (sortingType) {
-    let board = mongoose.model('board');
-    return await board.find().then((boards) => {
-        switch (sortingType) {
-            case 'recent':
-                return boards.sort((a, b) => b.createdAt - a.createdAt);
-            case 'like':
-                return boards.sort((a, b) => b.like - a.like);
-            default:
-                return boards;
-        }
-    });
+boardSchema.statics.getSortedBoards = async function (args) {
+    let sortingField;
+    switch (args.sort) {
+        case 'recent':
+            sortingField = Object.assign({ createdAt: 'desc' });
+            break;
+        case 'like':
+            sortingField = Object.assign({ like: 'desc' });
+            break;
+        case 'seq':
+            sortingField = Object.assign({ seq: 'asc' });
+    }
+
+    return await mongoose.model('board').find().sort(sortingField);
 };
 
 boardSchema.statics.updateBoard = async function (args) {
