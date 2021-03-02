@@ -9,6 +9,7 @@ const typeDefs = gql`
         author: String
         createdAt: Date
         updatedAt: Date
+        seq: Int
     }
 `;
 

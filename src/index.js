@@ -11,7 +11,14 @@ const resolvers = [boardResolvers];
 
 const server = new ApolloServer({ typeDefs, resolvers });
 
+dbConnect
+    .then(() => {
+        console.log('🚀  Mongodb ready');
+    })
+    .catch((err) => {
+        console.log('🚀  Mongodb error', err);
+    });
+
 server.listen().then(({ url }) => {
-    dbConnect();
     console.log(`🚀  Server ready at ${url}`);
 });
