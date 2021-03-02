@@ -33,10 +33,17 @@ const boardSchema = new mongoose.Schema({
 });
 
 boardSchema.statics.addLike = async function (_id) {
-    console.log('as');
     let board = mongoose.model('board');
     return board.findById(_id).then((board) => {
         ++board.like;
+        return board.save();
+    });
+};
+
+boardSchema.statics.addDislike = async function (_id) {
+    let board = mongoose.model('board');
+    return board.findById(_id).then((board) => {
+        --board.like;
         return board.save();
     });
 };

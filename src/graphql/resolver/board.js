@@ -27,7 +27,10 @@ const resolvers = {
             );
         },
         addLike: async (parent, args) => {
-            return boardSchema.addLike(args);
+            return await boardSchema.addLike(args);
+        },
+        addDislike: async (parent, args) => {
+            return await boardSchema.addDislike(args);
         },
     },
 };

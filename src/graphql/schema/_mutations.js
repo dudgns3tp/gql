@@ -16,6 +16,7 @@ const typeDefs = gql`
             label: [label]
         ): Board
         addLike(_id: String): Board
+        addDislike(_id: String): Board
     }
 `;
 
