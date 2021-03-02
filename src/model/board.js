@@ -54,7 +54,11 @@ boardSchema.statics.addDislike = async function (_id) {
 
 boardSchema.statics.getSortedBoards = async function (args) {
     let sortingField;
-    const { sort, page, limit } = args;
+    const { page, limit, sort } = {
+        page: args.page || 0,
+        limit: args.limit || 5,
+        sort: args.sort || 'seq',
+    };
     switch (sort) {
         case 'recent':
             sortingField = Object.assign({ createdAt: 'desc' });
@@ -86,10 +90,21 @@ boardSchema.statics.updateBoard = async function (args) {
 };
 
 boardSchema.statics.searchBoards = async function (args) {
+    const { page, limit, sort } = {
+        page: args.page || 0,
+        limit: args.limit || 5,
+        sort: args.sort || 'seq',
+    };
+
     const query = Object.assign({});
     const key = Object.keys(args)[0];
     query[key] = new RegExp(args[key]);
-    return await mongoose.model('board').find(query);
+    return await mongoose
+        .model('board')
+        .find(query)
+        .sort(sort)
+        .skip(page * limit)
+        .limit(limit);
 };
 
 boardSchema.plugin(autoIncrement.plugin, {
