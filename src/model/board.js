@@ -33,24 +33,29 @@ const boardSchema = new mongoose.Schema({
 });
 
 boardSchema.statics.addLike = async function (_id) {
-    let board = mongoose.model('board');
-    return board.findById(_id).then((board) => {
-        ++board.like;
-        return board.save();
-    });
+    return mongoose
+        .model('board')
+        .findById(_id)
+        .then((board) => {
+            ++board.like;
+            return board.save();
+        });
 };
 
 boardSchema.statics.addDislike = async function (_id) {
-    let board = mongoose.model('board');
-    return board.findById(_id).then((board) => {
-        --board.like;
-        return board.save();
-    });
+    return mongoose
+        .model('board')
+        .findById(_id)
+        .then((board) => {
+            --board.like;
+            return board.save();
+        });
 };
 
 boardSchema.statics.getSortedBoards = async function (args) {
     let sortingField;
-    switch (args.sort) {
+    const { sort, page, limit } = args;
+    switch (sort) {
         case 'recent':
             sortingField = Object.assign({ createdAt: 'desc' });
             break;
@@ -61,7 +66,12 @@ boardSchema.statics.getSortedBoards = async function (args) {
             sortingField = Object.assign({ seq: 'asc' });
     }
 
-    return await mongoose.model('board').find().sort(sortingField);
+    return await mongoose
+        .model('board')
+        .find()
+        .sort(sortingField)
+        .skip(page * limit)
+        .limit(limit);
 };
 
 boardSchema.statics.updateBoard = async function (args) {

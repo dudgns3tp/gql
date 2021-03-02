@@ -3,12 +3,14 @@ import Board from '../../model/board.js';
 const resolvers = {
     Query: {
         getBoards: async (_, args) => {
-            return await Board.getSortedBoards(args);
+            const pageOptions = {
+                page: args.page || 0,
+                limit: args.limit || 5,
+                sort: args.sort || 'seq',
+            };
+            return await Board.getSortedBoards(pageOptions);
         },
         getBoard: async (_, args) => await Board.findOne(args),
-        testBoards: async () => {
-            return await Board.find().sort({ like: 'desc' });
-        },
         searchBoards: async (_, args) => await Board.searchBoards(args),
     },
     Mutation: {
