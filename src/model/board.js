@@ -62,6 +62,24 @@ boardSchema.statics.getSortedBoards = async function (sortingType) {
     });
 };
 
+boardSchema.statics.updateBoard = async function (args) {
+    const { _id, ...updateArgs } = args;
+    Object.assign(updateArgs, {
+        updatedAt: dayjs().format('YYYY-MM-DD hh:mm:ss.SSS'),
+    });
+
+    return await mongoose
+        .model('board')
+        .findByIdAndUpdate(_id, { $set: updateArgs }, { new: true });
+};
+
+boardSchema.statics.searchBoards = async function (args) {
+    const query = Object.assign({});
+    const key = Object.keys(args)[0];
+    query[key] = new RegExp(args[key]);
+    return await mongoose.model('board').find(query);
+};
+
 boardSchema.plugin(autoIncrement.plugin, {
     model: 'boards',
     field: 'seq',
