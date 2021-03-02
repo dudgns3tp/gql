@@ -20,6 +20,12 @@ const boardSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    label: [
+        {
+            type: String,
+            required: false,
+        },
+    ],
 });
 
 boardSchema.plugin(autoIncrement.plugin, {
