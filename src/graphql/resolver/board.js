@@ -1,31 +1,18 @@
-import boardSchema from '../../model/board.js';
-import dayjs from 'dayjs';
+import Board from '../../model/board.js';
 
 const resolvers = {
     Query: {
-        boards: async () => await boardSchema.find(),
-        board: async (parent, args) => await boardSchema.findOne(args),
-        searchBoards: async (parent, args) => {
-            const query = {};
-            const key = Object.keys(args)[0];
-            query[key] = new RegExp(args[key]);
-            return await boardSchema.find(query);
-        },
+        getBoards: async (_, args) =>
+            await Board.getSortedBoards(args.sort || 'recent'),
+        getBoard: async (_, args) => await Board.findOne(args),
+        searchBoards: async (_, args) => await Board.searchBoards(args),
     },
     Mutation: {
-        addBoard: async (parent, args) =>
-            await new boardSchema({ ...args }).save(),
-        deleteBoard: async (parent, args) =>
-            await boardSchema.findByIdAndDelete(args),
-        updateBoard: async (parent, args) => {
-            const { _id, ...updateArgs } = args;
-            updateArgs.updatedAt = dayjs().format('YYYY-MM-DD hh:mm:ss.SSS');
-            return await boardSchema.findByIdAndUpdate(
-                _id,
-                { $set: updateArgs },
-                { new: true }
-            );
-        },
+        addBoard: async (_, args) => await new Board({ ...args }).save(),
+        deleteBoard: async (_, args) => await Board.findByIdAndDelete(args),
+        updateBoard: async (_, args) => await Board.updateBoard(args),
+        addLike: async (_, args) => await Board.addLike(args),
+        addDislike: async (_, args) => await Board.addDislike(args),
     },
 };
 

@@ -9,7 +9,9 @@ const typeDefs = gql`
         author: String
         createdAt: Date
         updatedAt: Date
+        label: [label]
         seq: Int
+        like: Int
     }
 `;
 
