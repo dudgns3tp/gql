@@ -3,9 +3,10 @@ import dayjs from 'dayjs';
 
 const resolvers = {
     Query: {
-        boards: async () => await boardSchema.find(),
-        board: async (parent, args) => await boardSchema.findOne(args),
-        searchBoards: async (parent, args) => {
+        getBoards: async (_, args) =>
+            await boardSchema.getSortedBoards(args.sort || 'recent'),
+        getBoard: async (_, args) => await boardSchema.findOne(args),
+        searchBoards: async (_, args) => {
             const query = {};
             const key = Object.keys(args)[0];
             query[key] = new RegExp(args[key]);
@@ -13,11 +14,10 @@ const resolvers = {
         },
     },
     Mutation: {
-        addBoard: async (parent, args) =>
-            await new boardSchema({ ...args }).save(),
-        deleteBoard: async (parent, args) =>
+        addBoard: async (_, args) => await new boardSchema({ ...args }).save(),
+        deleteBoard: async (_, args) =>
             await boardSchema.findByIdAndDelete(args),
-        updateBoard: async (parent, args) => {
+        updateBoard: async (_, args) => {
             const { _id, ...updateArgs } = args;
             updateArgs.updatedAt = dayjs().format('YYYY-MM-DD hh:mm:ss.SSS');
             return await boardSchema.findByIdAndUpdate(
@@ -26,12 +26,8 @@ const resolvers = {
                 { new: true }
             );
         },
-        addLike: async (parent, args) => {
-            return await boardSchema.addLike(args);
-        },
-        addDislike: async (parent, args) => {
-            return await boardSchema.addDislike(args);
-        },
+        addLike: async (parent, args) => await boardSchema.addLike(args),
+        addDislike: async (parent, args) => await boardSchema.addDislike(args),
     },
 };
 

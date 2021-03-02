@@ -48,6 +48,20 @@ boardSchema.statics.addDislike = async function (_id) {
     });
 };
 
+boardSchema.statics.getSortedBoards = async function (sortingType) {
+    let board = mongoose.model('board');
+    return await board.find().then((boards) => {
+        switch (sortingType) {
+            case 'recent':
+                return boards.sort((a, b) => b.createdAt - a.createdAt);
+            case 'like':
+                return boards.sort((a, b) => b.like - a.like);
+            default:
+                return boards;
+        }
+    });
+};
+
 boardSchema.plugin(autoIncrement.plugin, {
     model: 'boards',
     field: 'seq',

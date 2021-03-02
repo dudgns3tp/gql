@@ -10,6 +10,11 @@ const typeDefs = gql`
         question
         good_first_issue
     }
+
+    enum sortingTypes {
+        like
+        recent
+    }
 `;
 
 export default typeDefs;
