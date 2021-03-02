@@ -33,33 +33,49 @@ const boardSchema = new mongoose.Schema({
 });
 
 boardSchema.statics.addLike = async function (_id) {
-    let board = mongoose.model('board');
-    return board.findById(_id).then((board) => {
-        ++board.like;
-        return board.save();
-    });
+    return mongoose
+        .model('board')
+        .findById(_id)
+        .then((board) => {
+            ++board.like;
+            return board.save();
+        });
 };
 
 boardSchema.statics.addDislike = async function (_id) {
-    let board = mongoose.model('board');
-    return board.findById(_id).then((board) => {
-        --board.like;
-        return board.save();
-    });
+    return mongoose
+        .model('board')
+        .findById(_id)
+        .then((board) => {
+            --board.like;
+            return board.save();
+        });
 };
 
-boardSchema.statics.getSortedBoards = async function (sortingType) {
-    let board = mongoose.model('board');
-    return await board.find().then((boards) => {
-        switch (sortingType) {
-            case 'recent':
-                return boards.sort((a, b) => b.createdAt - a.createdAt);
-            case 'like':
-                return boards.sort((a, b) => b.like - a.like);
-            default:
-                return boards;
-        }
-    });
+boardSchema.statics.getSortedBoards = async function (args) {
+    let sortingField;
+    const { page, limit, sort } = {
+        page: args.page || 0,
+        limit: args.limit || 5,
+        sort: args.sort || 'seq',
+    };
+    switch (sort) {
+        case 'recent':
+            sortingField = Object.assign({ createdAt: 'desc' });
+            break;
+        case 'like':
+            sortingField = Object.assign({ like: 'desc' });
+            break;
+        case 'seq':
+            sortingField = Object.assign({ seq: 'asc' });
+    }
+
+    return await mongoose
+        .model('board')
+        .find()
+        .sort(sortingField)
+        .skip(page * limit)
+        .limit(limit);
 };
 
 boardSchema.statics.updateBoard = async function (args) {
@@ -74,10 +90,21 @@ boardSchema.statics.updateBoard = async function (args) {
 };
 
 boardSchema.statics.searchBoards = async function (args) {
+    const { page, limit, sort } = {
+        page: args.page || 0,
+        limit: args.limit || 5,
+        sort: args.sort || 'seq',
+    };
+
     const query = Object.assign({});
     const key = Object.keys(args)[0];
     query[key] = new RegExp(args[key]);
-    return await mongoose.model('board').find(query);
+    return await mongoose
+        .model('board')
+        .find(query)
+        .sort(sort)
+        .skip(page * limit)
+        .limit(limit);
 };
 
 boardSchema.plugin(autoIncrement.plugin, {

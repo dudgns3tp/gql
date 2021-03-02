@@ -2,8 +2,7 @@ import Board from '../../model/board.js';
 
 const resolvers = {
     Query: {
-        getBoards: async (_, args) =>
-            await Board.getSortedBoards(args.sort || 'recent'),
+        getBoards: async (_, args) => await Board.getSortedBoards(args),
         getBoard: async (_, args) => await Board.findOne(args),
         searchBoards: async (_, args) => await Board.searchBoards(args),
     },
