@@ -9,7 +9,12 @@ const typeDefs = gql`
             label: [label]
         ): Board
         deleteBoard(_id: String): Board
-        updateBoard(_id: String!, title: String, content: String): Board
+        updateBoard(
+            _id: String!
+            title: String
+            content: String
+            label: [label]
+        ): Board
     }
 `;
 
