@@ -26,6 +26,9 @@ const resolvers = {
                 { new: true }
             );
         },
+        addLike: async (parent, args) => {
+            return boardSchema.addLike(args);
+        },
     },
 };
 

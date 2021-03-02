@@ -11,6 +11,7 @@ const typeDefs = gql`
         updatedAt: Date
         label: [label]
         seq: Int
+        like: Int
     }
 `;
 

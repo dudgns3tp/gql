@@ -26,7 +26,20 @@ const boardSchema = new mongoose.Schema({
             required: false,
         },
     ],
+    like: {
+        type: Number,
+        default: 0,
+    },
 });
+
+boardSchema.statics.addLike = async function (_id) {
+    console.log('as');
+    let board = mongoose.model('board');
+    return board.findById(_id).then((board) => {
+        ++board.like;
+        return board.save();
+    });
+};
 
 boardSchema.plugin(autoIncrement.plugin, {
     model: 'boards',

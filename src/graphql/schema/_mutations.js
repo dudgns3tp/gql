@@ -15,6 +15,7 @@ const typeDefs = gql`
             content: String
             label: [label]
         ): Board
+        addLike(_id: String): Board
     }
 `;
 
