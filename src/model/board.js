@@ -32,22 +32,22 @@ const boardSchema = new mongoose.Schema({
     },
 });
 
-boardSchema.statics.addLike = async function (_id) {
-    return mongoose
-        .model('board')
-        .findById(_id)
-        .then((board) => {
-            ++board.like;
-            return board.save();
-        });
-};
-
 boardSchema.statics.addDislike = async function (_id) {
     return mongoose
         .model('board')
         .findById(_id)
         .then((board) => {
             --board.like;
+            return board.save();
+        });
+};
+
+boardSchema.statics.addLike = async function (_id) {
+    return mongoose
+        .model('board')
+        .findById(_id)
+        .then((board) => {
+            ++board.like;
             return board.save();
         });
 };
