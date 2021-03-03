@@ -17,7 +17,7 @@ dbConnect
         console.log('🚀  Mongodb ready');
     })
     .catch((err) => {
-        console.log('🚀  Mongodb error', err);
+        console.log('🧨  Mongodb error', err.console);
     });
 
 server.listen().then(({ url }) => {

@@ -5,6 +5,7 @@ const resolvers = {
         getBoards: async (_, args) => await Board.getSortedBoards(args),
         getBoard: async (_, args) => await Board.findOne(args),
         searchBoards: async (_, args) => await Board.searchBoards(args),
+        getBoardsCount: async () => await Board.getBoardsCount(),
     },
     Mutation: {
         addBoard: async (_, args) => await new Board({ ...args }).save(),

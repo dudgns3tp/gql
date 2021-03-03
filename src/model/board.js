@@ -55,7 +55,7 @@ boardSchema.statics.addDislike = async function (_id) {
 boardSchema.statics.getSortedBoards = async function (args) {
     let sortingField;
     const { page, limit, sort } = {
-        page: args.page || 0,
+        page: args.page || 1,
         limit: args.limit || 5,
         sort: args.sort || 'seq',
     };
@@ -68,13 +68,14 @@ boardSchema.statics.getSortedBoards = async function (args) {
             break;
         case 'seq':
             sortingField = Object.assign({ seq: 'asc' });
+            break;
     }
 
     return await mongoose
         .model('board')
         .find()
         .sort(sortingField)
-        .skip(page * limit)
+        .skip((page - 1) * limit)
         .limit(limit);
 };
 
@@ -84,9 +85,7 @@ boardSchema.statics.updateBoard = async function (args) {
         updatedAt: dayjs().format('YYYY-MM-DD hh:mm:ss.SSS'),
     });
 
-    return await mongoose
-        .model('board')
-        .findByIdAndUpdate(_id, { $set: updateArgs }, { new: true });
+    return await mongoose.model('board').findByIdAndUpdate(_id, { $set: updateArgs }, { new: true });
 };
 
 boardSchema.statics.searchBoards = async function (args) {
@@ -105,6 +104,17 @@ boardSchema.statics.searchBoards = async function (args) {
         .sort(sort)
         .skip(page * limit)
         .limit(limit);
+};
+
+boardSchema.statics.getBoardsCount = async function () {
+    return {
+        count: mongoose
+            .model('board')
+            .find()
+            .then((boards) => {
+                return boards.length;
+            }),
+    };
 };
 
 boardSchema.plugin(autoIncrement.plugin, {
