@@ -6,6 +6,7 @@ const typeDefs = gql`
         getBoard(_id: String!): Board
         searchBoards(title: String, author: String, content: String, page: Int, limit: Int, sort: sortingTypes): [Board]
         getBoardsCount: BoardCount
+        getSearchCount(title: String, author: String, content: String): BoardCount
     }
 `;
 

@@ -90,7 +90,7 @@ boardSchema.statics.updateBoard = async function (args) {
 
 boardSchema.statics.searchBoards = async function (args) {
     const { page, limit, sort } = {
-        page: args.page || 0,
+        page: args.page || 1,
         limit: args.limit || 5,
         sort: args.sort || 'seq',
     };
@@ -102,8 +102,20 @@ boardSchema.statics.searchBoards = async function (args) {
         .model('board')
         .find(query)
         .sort(sort)
-        .skip(page * limit)
+        .skip((page - 1) * limit)
         .limit(limit);
+};
+
+boardSchema.statics.searchCount = function (args) {
+    const query = Object.assign({});
+    const key = Object.keys(args)[0];
+    query[key] = new RegExp(args[key]);
+    return {
+        count: mongoose
+            .model('board')
+            .find(query)
+            .then((boards) => boards.length),
+    };
 };
 
 boardSchema.statics.getBoardsCount = async function () {

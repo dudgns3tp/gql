@@ -2,17 +2,18 @@ import Board from '../../model/board.js';
 
 const resolvers = {
     Query: {
-        getBoards: async (_, args) => await Board.getSortedBoards(args),
+        getBoards: async (_, args) => Board.getSortedBoards(args),
         getBoard: async (_, args) => await Board.findOne(args),
-        searchBoards: async (_, args) => await Board.searchBoards(args),
-        getBoardsCount: async () => await Board.getBoardsCount(),
+        searchBoards: async (_, args) => Board.searchBoards(args),
+        getBoardsCount: async () => Board.getBoardsCount(),
+        getSearchCount: async (_, args) => Board.searchCount(args),
     },
     Mutation: {
         addBoard: async (_, args) => await new Board({ ...args }).save(),
         deleteBoard: async (_, args) => await Board.findByIdAndDelete(args),
-        updateBoard: async (_, args) => await Board.updateBoard(args),
-        addLike: async (_, args) => await Board.addLike(args),
-        addDislike: async (_, args) => await Board.addDislike(args),
+        updateBoard: async (_, args) => Board.updateBoard(args),
+        addLike: async (_, args) => Board.addLike(args),
+        addDislike: async (_, args) => Board.addDislike(args),
     },
 };
 
