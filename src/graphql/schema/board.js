@@ -7,7 +7,7 @@ const typeDefs = gql`
     }
 
     type Board {
-        _id: String
+        _id: ID!
         title: String
         content: String
         author: String
@@ -16,6 +16,13 @@ const typeDefs = gql`
         label: [label]
         seq: Int
         like: Int
+    }
+
+    input BoardInput {
+        title: String
+        content: String
+        author: String
+        label: [label]
     }
 `;
 

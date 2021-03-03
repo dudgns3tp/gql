@@ -10,6 +10,7 @@ const resolvers = {
     },
     Mutation: {
         addBoard: async (_, args) => await new Board({ ...args }).save(),
+        addInputBoard: async (_, args) => await new Board({ ...args.input }).save(),
         deleteBoard: async (_, args) => await Board.findByIdAndDelete(args),
         updateBoard: async (_, args) => Board.updateBoard(args),
         addLike: async (_, args) => Board.addLike(args),

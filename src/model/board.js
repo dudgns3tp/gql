@@ -118,7 +118,7 @@ boardSchema.statics.searchCount = function (args) {
     };
 };
 
-boardSchema.statics.getBoardsCount = async function () {
+boardSchema.statics.getBoardsCount = function () {
     return {
         count: mongoose
             .model('board')
