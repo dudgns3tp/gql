@@ -53,7 +53,7 @@ boardSchema.statics.addLike = async function (_id) {
         });
 };
 
-boardSchema.statics.getSortedBoards = async function (args) {
+boardSchema.statics.getSortedBoards = function (args) {
     let sortingField;
     const { page, limit, sort } = {
         page: args.page || 1,
@@ -72,12 +72,16 @@ boardSchema.statics.getSortedBoards = async function (args) {
             break;
     }
 
-    return await mongoose
+    return mongoose
         .model('board')
         .find()
         .sort(sortingField)
         .skip((page - 1) * limit)
-        .limit(limit);
+        .limit(limit)
+        .then((boards) => boards)
+        .catch(() => {
+            throw new ApolloError('INTERNER SERVER ERROR', 'INTERNER_SERVER_ERROR');
+        });
 };
 
 boardSchema.statics.updateBoard = async function (args) {
