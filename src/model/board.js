@@ -34,23 +34,17 @@ const boardSchema = new mongoose.Schema({
 });
 
 boardSchema.statics.addDislike = async function (_id) {
-    return mongoose
-        .model('board')
-        .findById(_id)
-        .then((board) => {
-            --board.like;
-            return board.save();
-        });
+    return this.findById(_id).then((board) => {
+        --board.like;
+        return board.save();
+    });
 };
 
 boardSchema.statics.addLike = async function (_id) {
-    return mongoose
-        .model('board')
-        .findById(_id)
-        .then((board) => {
-            ++board.like;
-            return board.save();
-        });
+    return this.findById(_id).then((board) => {
+        ++board.like;
+        return board.save();
+    });
 };
 
 boardSchema.statics.getSortedBoards = function (args) {
@@ -72,9 +66,7 @@ boardSchema.statics.getSortedBoards = function (args) {
             break;
     }
 
-    return mongoose
-        .model('board')
-        .find()
+    return this.find()
         .sort(sortingField)
         .skip((page - 1) * limit)
         .limit(limit)
@@ -90,7 +82,7 @@ boardSchema.statics.updateBoard = async function (args) {
         updatedAt: dayjs().format('YYYY-MM-DD hh:mm:ss.SSS'),
     });
 
-    return await mongoose.model('board').findByIdAndUpdate(_id, { $set: updateArgs }, { new: true });
+    return await this.findByIdAndUpdate(_id, { $set: updateArgs }, { new: true });
 };
 
 boardSchema.statics.searchBoards = async function (args) {
@@ -103,9 +95,7 @@ boardSchema.statics.searchBoards = async function (args) {
     const query = Object.assign({});
     const key = Object.keys(args)[0];
     query[key] = new RegExp(args[key]);
-    return await mongoose
-        .model('board')
-        .find(query)
+    return await this.find(query)
         .sort(sort)
         .skip((page - 1) * limit)
         .limit(limit);
@@ -116,28 +106,20 @@ boardSchema.statics.searchCount = function (args) {
     const key = Object.keys(args)[0];
     query[key] = new RegExp(args[key]);
     return {
-        count: mongoose
-            .model('board')
-            .find(query)
-            .then((boards) => boards.length),
+        count: this.find(query).then((boards) => boards.length),
     };
 };
 
 boardSchema.statics.getBoardsCount = function () {
     return {
-        count: mongoose
-            .model('board')
-            .find()
-            .then((boards) => {
-                return boards.length;
-            }),
+        count: this.find().then((boards) => {
+            return boards.length;
+        }),
     };
 };
 
 boardSchema.statics.deleteBoardById = function (args) {
-    const board = mongoose
-        .model('board')
-        .findByIdAndDelete(args)
+    return this.findByIdAndDelete(args)
         .then((item) => {
             return item;
         })
@@ -146,7 +128,6 @@ boardSchema.statics.deleteBoardById = function (args) {
                 parameter: '_id',
             });
         });
-    return board;
 };
 
 boardSchema.plugin(autoIncrement.plugin, {
