@@ -53,3 +53,49 @@ test('create new Board', async () => {
     });
     expect(addBoard).toBeTruthy();
 });
+
+test('deleteBoard', async () => {
+    const DELETE_BOARD = gql`
+        mutation($_id: ID!) {
+            deleteBoard(_id: $_id) {
+                _id
+                title
+                author
+                content
+            }
+        }
+    `;
+
+    const {
+        data: { deleteBoard },
+    } = await mutate({
+        mutation: DELETE_BOARD,
+        variables: {
+            _id: '6040436f866bf94d2f992a19',
+        },
+    });
+    expect(deleteBoard).toBeTruthy();
+});
+
+test('can not delete board', async () => {
+    const DELETE_BOARD = gql`
+        mutation($_id: ID!) {
+            deleteBoard(_id: $_id) {
+                _id
+                title
+                author
+                content
+            }
+        }
+    `;
+
+    const {
+        data: { deleteBoard },
+    } = await mutate({
+        mutation: DELETE_BOARD,
+        variables: {
+            _id: '603df67b7047418c15bfe2dd',
+        },
+    });
+    expect(deleteBoard).toBeFalsy();
+});
