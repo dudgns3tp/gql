@@ -4,7 +4,7 @@ import resolvers from './graphql/resolver/index.js';
 import typeDefs from './graphql/schema/index.js';
 import formatError from './graphql/formatError.js';
 
-const server = new ApolloServer({ typeDefs, resolvers, formatError });
+const server = new ApolloServer({ typeDefs, resolvers, formatError, debug: false });
 
 dbConnect
     .then(() => {

@@ -2,7 +2,7 @@ import Board from '../../model/board.js';
 
 const resolvers = {
     Query: {
-        getBoards: (_, { sort, page, limit }) => Board.getSortedBoards({ sort, page, limit }),
+        getBoards: (_, args) => Board.getSortedBoards(args),
         getBoard: async (_, args) => await Board.findOne(args),
         searchBoards: (_, args) => Board.searchBoards(args),
         getBoardsCount: () => Board.getBoardsCount(),

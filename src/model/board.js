@@ -5,6 +5,7 @@ import { ApolloError } from 'apollo-server';
 import { db as connection } from './index.js';
 
 autoIncrement.initialize(connection);
+
 const boardSchema = new mongoose.Schema({
     title: { type: String, required: true },
     author: { type: String, required: true },
@@ -33,18 +34,30 @@ const boardSchema = new mongoose.Schema({
     },
 });
 
-boardSchema.statics.addDislike = async function (_id) {
-    return this.findById(_id).then((board) => {
-        --board.like;
-        return board.save();
-    });
+boardSchema.statics.addDislike = function (_id) {
+    return this.findById(_id)
+        .then((board) => {
+            --board.like;
+            return board.save();
+        })
+        .catch(() => {
+            throw new ApolloError('not found board _id', 'INVALID_ID', {
+                parameter: '_id',
+            });
+        });
 };
 
-boardSchema.statics.addLike = async function (_id) {
-    return this.findById(_id).then((board) => {
-        ++board.like;
-        return board.save();
-    });
+boardSchema.statics.addLike = function (_id) {
+    return this.findById(_id)
+        .then((board) => {
+            ++board.like;
+            return board.save();
+        })
+        .catch(() => {
+            throw new ApolloError('not found board _id', 'INVALID_ID', {
+                parameter: '_id',
+            });
+        });
 };
 
 boardSchema.statics.getSortedBoards = function (args) {
@@ -81,8 +94,13 @@ boardSchema.statics.updateBoard = async function (args) {
     Object.assign(updateArgs, {
         updatedAt: dayjs().format('YYYY-MM-DD hh:mm:ss.SSS'),
     });
-
-    return await this.findByIdAndUpdate(_id, { $set: updateArgs }, { new: true });
+    try {
+        return await this.findByIdAndUpdate(_id, { $set: updateArgs }, { new: true });
+    } catch {
+        throw new ApolloError('not found board _id', 'INVALID_ID', {
+            parameter: '_id',
+        });
+    }
 };
 
 boardSchema.statics.searchBoards = async function (args) {

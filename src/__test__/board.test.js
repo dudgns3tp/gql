@@ -1,8 +1,8 @@
 /* eslint-disable no-undef */
 import { ApolloServer, gql } from 'apollo-server';
 import { createTestClient } from 'apollo-server-testing';
-import typeDefs from '../src/graphql/schema/index.js';
-import resolvers from '../src/graphql/resolver/index.js';
+import typeDefs from '../graphql/schema/index.js';
+import resolvers from '../graphql/resolver/index.js';
 
 const server = new ApolloServer({ typeDefs, resolvers });
 
