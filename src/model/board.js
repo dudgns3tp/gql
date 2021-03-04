@@ -12,11 +12,15 @@ const boardSchema = new mongoose.Schema({
     content: { type: String, required: true },
     createdAt: {
         type: Date,
-        default: dayjs().format('YYYY-MM-DD hh:mm:ss.SSS'),
+        default: dayjs(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
+            .add(9, 'h')
+            .format('YYYY-MM-DD HH:mm:ss'),
     },
     updatedAt: {
         type: Date,
-        default: dayjs().format('YYYY-MM-DD hh:mm:ss.SSS'),
+        default: dayjs(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
+            .add(9, 'h')
+            .format('YYYY-MM-DD HH:mm:ss'),
     },
     seq: {
         type: Number,
@@ -33,6 +37,18 @@ const boardSchema = new mongoose.Schema({
         default: 0,
     },
 });
+
+boardSchema.statics.sortingTypeMap = new Map()
+    .set('recent', { createdAt: 'desc' })
+    .set('like', { like: 'desc' })
+    .set('seq', { seq: 'asc' });
+
+boardSchema.statics.getRegExpQuery = function (args) {
+    const query = Object.assign({});
+    const key = Object.keys(args)[0];
+    query[key] = new RegExp(args[key]);
+    return query;
+};
 
 boardSchema.statics.addDislike = function (_id) {
     return this.findById(_id)
@@ -67,12 +83,7 @@ boardSchema.statics.getSortedBoards = function (args) {
         sort: args.sort || 'seq',
     };
 
-    const sortingTypeMap = new Map()
-        .set('recent', { createdAt: 'desc' })
-        .set('like', { like: 'desc' })
-        .set('seq', { seq: 'asc' });
-
-    const sortingField = Object.assign(sortingTypeMap.get(sort));
+    const sortingField = Object.assign(this.sortingTypeMap.get(sort));
 
     return this.find()
         .sort(sortingField)
@@ -84,22 +95,6 @@ boardSchema.statics.getSortedBoards = function (args) {
         });
 };
 
-boardSchema.statics.updateBoard = function (args) {
-    const { _id, ...updateArgs } = args;
-
-    Object.assign(updateArgs, {
-        updatedAt: dayjs().format('YYYY-MM-DD hh:mm:ss.SSS'),
-    });
-
-    return this.findByIdAndUpdate(_id, { $set: updateArgs }, { new: true })
-        .then((board) => board)
-        .catch(() => {
-            throw new ApolloError('not found board _id', 'INVALID_ID', {
-                parameter: '_id',
-            });
-        });
-};
-
 boardSchema.statics.searchBoards = function (args) {
     const { page, limit, sort } = {
         page: args.page || 1,
@@ -107,12 +102,11 @@ boardSchema.statics.searchBoards = function (args) {
         sort: args.sort || 'seq',
     };
 
-    const query = Object.assign({});
-    const key = Object.keys(args)[0];
-    query[key] = new RegExp(args[key]);
+    const sortingField = Object.assign(this.sortingTypeMap.get(sort));
+    const query = this.getRegExpQuery(args);
 
     return this.find(query)
-        .sort(sort)
+        .sort(sortingField)
         .skip((page - 1) * limit)
         .limit(limit)
         .then((boards) => boards)
@@ -122,9 +116,7 @@ boardSchema.statics.searchBoards = function (args) {
 };
 
 boardSchema.statics.searchCount = function (args) {
-    const query = Object.assign({});
-    const key = Object.keys(args)[0];
-    query[key] = new RegExp(args[key]);
+    const query = this.getRegExpQuery(args);
 
     return {
         count: this.find(query)
@@ -133,6 +125,24 @@ boardSchema.statics.searchCount = function (args) {
                 throw new ApolloError('INTERNER SERVER ERROR', 'INTERNER_SERVER_ERROR');
             }),
     };
+};
+
+boardSchema.statics.updateBoard = function (args) {
+    const { _id, ...updateArgs } = args;
+
+    Object.assign(updateArgs, {
+        updatedAt: dayjs(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
+            .add(9, 'h')
+            .format('YYYY-MM-DD HH:mm:ss'),
+    });
+
+    return this.findByIdAndUpdate(_id, { $set: updateArgs }, { new: true })
+        .then((board) => board)
+        .catch(() => {
+            throw new ApolloError('not found board _id', 'INVALID_ID', {
+                parameter: '_id',
+            });
+        });
 };
 
 boardSchema.statics.getBoardsCount = function () {
