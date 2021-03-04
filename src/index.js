@@ -2,8 +2,9 @@ import { ApolloServer } from 'apollo-server';
 import dbConnect from './model/index.js';
 import resolvers from './graphql/resolver/index.js';
 import typeDefs from './graphql/schema/index.js';
+import formatError from './graphql/formatError.js';
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({ typeDefs, resolvers, formatError });
 
 dbConnect
     .then(() => {

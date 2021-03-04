@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import autoIncrement from 'mongoose-auto-increment';
 import dayjs from 'dayjs';
+import { ApolloError } from 'apollo-server';
 import { db as connection } from './index.js';
 
 autoIncrement.initialize(connection);
@@ -127,6 +128,21 @@ boardSchema.statics.getBoardsCount = function () {
                 return boards.length;
             }),
     };
+};
+
+boardSchema.statics.deleteBoardById = function (args) {
+    const board = mongoose
+        .model('board')
+        .findByIdAndDelete(args)
+        .then((item) => {
+            return item;
+        })
+        .catch(() => {
+            throw new ApolloError('not Found _id', 'INVALID_ID', {
+                parameter: '_id',
+            });
+        });
+    return board;
 };
 
 boardSchema.plugin(autoIncrement.plugin, {
