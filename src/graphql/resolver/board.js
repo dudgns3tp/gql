@@ -9,7 +9,7 @@ const resolvers = {
         getSearchCount: (_, args) => Board.searchCount(args),
     },
     Mutation: {
-        addBoard: async (_, args) => await new Board({ ...args }).save(),
+        addBoard: async (_, args) => await new Board(args).save(),
         addInputBoard: async (_, args) => await new Board({ ...args.input }).save(),
         deleteBoard: (_, args) => Board.deleteBoardById(args),
         updateBoard: (_, args) => Board.updateBoard(args),

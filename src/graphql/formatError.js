@@ -1,5 +1,5 @@
 const formatError = (err) => {
-    console.error('--- GraphQL Error ---');
+    console.error(' --- 🛠   GraphQL Error   🛠  ---');
     console.error('Path:', err.path);
     console.error('Message:', err.message);
     console.error('Code:', err.extensions.code);

@@ -13,7 +13,7 @@
         "node": true,
         "es2021": true
     },
-    "ignorePatterns": ["node_modules/"],
+    "ignorePatterns": ["node_modules/", "dist/"],
     "rules": {
         "prettier/prettier": ["error"],
         "semi": ["error", "always"]

@@ -8,9 +8,9 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
-    "start": "nodemon ./src/index.js",
+    "start": "nodemon ./src/app.js",
     "test": "jest --detectOpenHandles",
-    "build": "babel src/ -w -d dist/js",
+    "build": "babel src/ -w -d src/dist/js",
     "buildTest": "babel __test__/ -w -d dist/test"
   },
   "dependencies": {

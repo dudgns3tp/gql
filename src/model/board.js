@@ -61,23 +61,18 @@ boardSchema.statics.addLike = function (_id) {
 };
 
 boardSchema.statics.getSortedBoards = function (args) {
-    let sortingField;
     const { page, limit, sort } = {
         page: args.page || 1,
         limit: args.limit || 5,
         sort: args.sort || 'seq',
     };
-    switch (sort) {
-        case 'recent':
-            sortingField = Object.assign({ createdAt: 'desc' });
-            break;
-        case 'like':
-            sortingField = Object.assign({ like: 'desc' });
-            break;
-        case 'seq':
-            sortingField = Object.assign({ seq: 'asc' });
-            break;
-    }
+
+    const sortingTypeMap = new Map()
+        .set('recent', { createdAt: 'desc' })
+        .set('like', { like: 'desc' })
+        .set('seq', { seq: 'asc' });
+
+    const sortingField = Object.assign(sortingTypeMap.get(sort));
 
     return this.find()
         .sort(sortingField)
@@ -89,21 +84,23 @@ boardSchema.statics.getSortedBoards = function (args) {
         });
 };
 
-boardSchema.statics.updateBoard = async function (args) {
+boardSchema.statics.updateBoard = function (args) {
     const { _id, ...updateArgs } = args;
+
     Object.assign(updateArgs, {
         updatedAt: dayjs().format('YYYY-MM-DD hh:mm:ss.SSS'),
     });
-    try {
-        return await this.findByIdAndUpdate(_id, { $set: updateArgs }, { new: true });
-    } catch {
-        throw new ApolloError('not found board _id', 'INVALID_ID', {
-            parameter: '_id',
+
+    return this.findByIdAndUpdate(_id, { $set: updateArgs }, { new: true })
+        .then((board) => board)
+        .catch(() => {
+            throw new ApolloError('not found board _id', 'INVALID_ID', {
+                parameter: '_id',
+            });
         });
-    }
 };
 
-boardSchema.statics.searchBoards = async function (args) {
+boardSchema.statics.searchBoards = function (args) {
     const { page, limit, sort } = {
         page: args.page || 1,
         limit: args.limit || 5,
@@ -113,26 +110,40 @@ boardSchema.statics.searchBoards = async function (args) {
     const query = Object.assign({});
     const key = Object.keys(args)[0];
     query[key] = new RegExp(args[key]);
-    return await this.find(query)
+
+    return this.find(query)
         .sort(sort)
         .skip((page - 1) * limit)
-        .limit(limit);
+        .limit(limit)
+        .then((boards) => boards)
+        .catch(() => {
+            throw new ApolloError('INTERNER SERVER ERROR', 'INTERNER_SERVER_ERROR');
+        });
 };
 
 boardSchema.statics.searchCount = function (args) {
     const query = Object.assign({});
     const key = Object.keys(args)[0];
     query[key] = new RegExp(args[key]);
+
     return {
-        count: this.find(query).then((boards) => boards.length),
+        count: this.find(query)
+            .then((boards) => boards.length)
+            .catch(() => {
+                throw new ApolloError('INTERNER SERVER ERROR', 'INTERNER_SERVER_ERROR');
+            }),
     };
 };
 
 boardSchema.statics.getBoardsCount = function () {
     return {
-        count: this.find().then((boards) => {
-            return boards.length;
-        }),
+        count: this.find()
+            .then((boards) => {
+                return boards.length;
+            })
+            .catch(() => {
+                throw new ApolloError('INTERNER SERVER ERROR', 'INTERNER_SERVER_ERROR');
+            }),
     };
 };
 
