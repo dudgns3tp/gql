@@ -7,6 +7,7 @@ import resolvers from '../graphql/resolver/index.js';
 const server = new ApolloServer({ typeDefs, resolvers });
 
 const { query, mutate } = createTestClient(server);
+let deleteObj;
 
 test('get board', async () => {
     const GET_BOARD = gql`
@@ -51,6 +52,7 @@ test('create new Board', async () => {
             label: ['bug'],
         },
     });
+    deleteObj = addBoard;
     expect(addBoard).toBeTruthy();
 });
 
@@ -71,7 +73,7 @@ test('deleteBoard', async () => {
     } = await mutate({
         mutation: DELETE_BOARD,
         variables: {
-            _id: '6040436f866bf94d2f992a19',
+            _id: deleteObj._id,
         },
     });
     expect(deleteBoard).toBeTruthy();
@@ -98,4 +100,56 @@ test('can not delete board', async () => {
         },
     });
     expect(deleteBoard).toBeFalsy();
+});
+
+test('add Like', async () => {
+    const GET_BOARD = gql`
+        query {
+            getBoard(_id: "603df6147047418c15bfe2d7") {
+                like
+            }
+        }
+    `;
+    const {
+        data: { getBoard },
+    } = await query({ query: GET_BOARD });
+
+    const ADD_LIKE = gql`
+        mutation($_id: ID!) {
+            addLike(_id: $_id) {
+                like
+            }
+        }
+    `;
+
+    const {
+        data: { addLike },
+    } = await mutate({ mutation: ADD_LIKE, variables: { _id: '603df6147047418c15bfe2d7' } });
+    expect(addLike.like).toEqual(getBoard.like + 1);
+});
+
+test('add disLike', async () => {
+    const GET_BOARD = gql`
+        query {
+            getBoard(_id: "603df6147047418c15bfe2d7") {
+                like
+            }
+        }
+    `;
+    const {
+        data: { getBoard },
+    } = await query({ query: GET_BOARD });
+
+    const ADD_DISLIKE = gql`
+        mutation($_id: ID!) {
+            addDislike(_id: $_id) {
+                like
+            }
+        }
+    `;
+
+    const {
+        data: { addDislike },
+    } = await mutate({ mutation: ADD_DISLIKE, variables: { _id: '603df6147047418c15bfe2d7' } });
+    expect(addDislike.like).toEqual(getBoard.like - 1);
 });
