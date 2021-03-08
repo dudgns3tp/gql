@@ -3,6 +3,7 @@ import autoIncrement from 'mongoose-auto-increment';
 import { dateNow } from '../modules/dateNow.js';
 import { ApolloError } from 'apollo-server';
 import { db as connection } from './index.js';
+import _ from 'lodash';
 
 autoIncrement.initialize(connection);
 
@@ -91,6 +92,12 @@ boardSchema.statics.getSortedBoards = function (args) {
         });
 };
 
+/**
+ *
+ * page, limit, sort는 공통,
+ * title. author, content가 들어가면
+ */
+
 boardSchema.statics.searchBoards = function (args) {
     const { page, limit, sort } = {
         page: args.page || 1,
@@ -99,7 +106,16 @@ boardSchema.statics.searchBoards = function (args) {
     };
 
     const sortingField = Object.assign(this.sortingTypeMap.get(sort));
-    const query = this.getRegExpQuery(args);
+    //const query = this.getRegExpQuery(args);
+    // const { title, author, content } = args;
+    // const arr = [author, title, content].filter((item) => {
+    //     console.log(Object.keys(item));
+    //     return !_.isNil(item);
+    // });
+    const query = Object.assign({});
+    const key = Object.keys(args)[0];
+    query[key] = new RegExp(args[key]);
+    console.log(query);
 
     return this.find(query)
         .sort(sortingField)
