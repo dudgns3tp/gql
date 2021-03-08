@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import autoIncrement from 'mongoose-auto-increment';
-import dayjs from 'dayjs';
+import { dateNow } from '../modules/dateNow.js';
 import { ApolloError } from 'apollo-server';
 import { db as connection } from './index.js';
 
@@ -12,15 +12,11 @@ const boardSchema = new mongoose.Schema({
     content: { type: String, required: true },
     createdAt: {
         type: Date,
-        default: dayjs(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
-            .add(9, 'h')
-            .format('YYYY-MM-DD HH:mm:ss'),
+        default: dateNow(9),
     },
     updatedAt: {
         type: Date,
-        default: dayjs(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
-            .add(9, 'h')
-            .format('YYYY-MM-DD HH:mm:ss'),
+        default: dateNow(9),
     },
     seq: {
         type: Number,
@@ -131,9 +127,7 @@ boardSchema.statics.updateBoard = function (args) {
     const { _id, ...updateArgs } = args;
 
     Object.assign(updateArgs, {
-        updatedAt: dayjs(new Date().toLocaleString('en-US', { timeZone: 'Asia/Seoul' }))
-            .add(9, 'h')
-            .format('YYYY-MM-DD HH:mm:ss'),
+        updatedAt: dateNow(9),
     });
 
     return this.findByIdAndUpdate(_id, { $set: updateArgs }, { new: true })
@@ -148,9 +142,7 @@ boardSchema.statics.updateBoard = function (args) {
 boardSchema.statics.getBoardsCount = function () {
     return {
         count: this.find()
-            .then((boards) => {
-                return boards.length;
-            })
+            .then((boards) => boards.length)
             .catch(() => {
                 throw new ApolloError('INTERNER SERVER ERROR', 'INTERNER_SERVER_ERROR');
             }),
@@ -159,9 +151,7 @@ boardSchema.statics.getBoardsCount = function () {
 
 boardSchema.statics.deleteBoardById = function (args) {
     return this.findByIdAndDelete(args)
-        .then((item) => {
-            return item;
-        })
+        .then((item) => item)
         .catch(() => {
             throw new ApolloError('not Found _id', 'INVALID_ID', {
                 parameter: '_id',
