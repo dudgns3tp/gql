@@ -2,7 +2,6 @@ import { gql } from 'apollo-server';
 
 const typeDefs = gql`
     type Query {
-        getBoards(sort: sortingTypes, page: Int, limit: Int): [Board]
         getBoard(_id: ID!): Board
         searchBoards(
             title: String
@@ -13,7 +12,6 @@ const typeDefs = gql`
             sort: sortingTypes
             isMatched: Boolean
         ): [Board]
-        getBoardsCount: BoardCount
         getSearchCount(
             title: String
             author: String
