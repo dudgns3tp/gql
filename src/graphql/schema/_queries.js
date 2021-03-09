@@ -11,9 +11,15 @@ const typeDefs = gql`
             page: Int
             limit: Int
             sort: sortingTypes
+            isMatched: Boolean
         ): [Board]
         getBoardsCount: BoardCount
-        getSearchCount(title: String, author: String, content: String): BoardCount
+        getSearchCount(
+            title: String
+            author: String
+            content: String
+            isMatched: Boolean
+        ): BoardCount
     }
 `;
 

@@ -3,7 +3,6 @@ import autoIncrement from 'mongoose-auto-increment';
 import { dateNow } from '../modules/dateNow.js';
 import { ApolloError } from 'apollo-server';
 import { db as connection } from './index.js';
-import _ from 'lodash';
 
 autoIncrement.initialize(connection);
 
@@ -39,13 +38,6 @@ boardSchema.statics.sortingTypeMap = new Map()
     .set('recent', { createdAt: 'desc' })
     .set('like', { like: 'desc' })
     .set('seq', { seq: 'asc' });
-
-boardSchema.statics.getRegExpQuery = function (args) {
-    const query = Object.assign({});
-    const key = Object.keys(args)[0];
-    query[key] = new RegExp(args[key]);
-    return query;
-};
 
 boardSchema.statics.addDislike = function (_id) {
     return this.findById(_id)
@@ -92,32 +84,50 @@ boardSchema.statics.getSortedBoards = function (args) {
         });
 };
 
-/**
- *
- * page, limit, sort는 공통,
- * title. author, content가 들어가면
- */
+boardSchema.statics.validParameters = function (args) {
+    const { title, author, content, isMatched } = args;
+    let arr = [];
+    const existedParameters = Object.entries({ title, content, author }).filter(
+        (it) => it[1] != undefined
+    );
+
+    for (let i of existedParameters) {
+        switch (i[0]) {
+            case 'title':
+                arr.push({ title: isMatched === true ? i[1] : new RegExp(i[1]) });
+                break;
+            case 'author':
+                arr.push({ author: isMatched === true ? i[1] : new RegExp(i[1]) });
+                break;
+            case 'content':
+                arr.push({ content: isMatched === true ? i[1] : new RegExp(i[1]) });
+                break;
+        }
+    }
+    return arr;
+};
 
 boardSchema.statics.searchBoards = function (args) {
-    const { page, limit, sort } = {
+    let findQuery = this.find();
+    let query;
+    const { page, limit, sort, title, author, content, isMatched } = {
         page: args.page || 1,
         limit: args.limit || 5,
         sort: args.sort || 'seq',
+        title: args.title,
+        author: args.author,
+        content: args.content,
+        isMatched: args.isMatched || false,
     };
 
     const sortingField = Object.assign(this.sortingTypeMap.get(sort));
-    //const query = this.getRegExpQuery(args);
-    // const { title, author, content } = args;
-    // const arr = [author, title, content].filter((item) => {
-    //     console.log(Object.keys(item));
-    //     return !_.isNil(item);
-    // });
-    const query = Object.assign({});
-    const key = Object.keys(args)[0];
-    query[key] = new RegExp(args[key]);
-    console.log(query);
+    query = this.validParameters({ title, author, content, isMatched });
 
-    return this.find(query)
+    if (title || author || content) {
+        findQuery = this.find().or(query);
+    }
+
+    return findQuery
         .sort(sortingField)
         .skip((page - 1) * limit)
         .limit(limit)
@@ -128,10 +138,21 @@ boardSchema.statics.searchBoards = function (args) {
 };
 
 boardSchema.statics.searchCount = function (args) {
-    const query = this.getRegExpQuery(args);
+    const { title, author, content, isMatched } = {
+        title: args.title,
+        author: args.author,
+        content: args.content,
+        isMatched: args.isMatched || false,
+    };
+    let query;
+    let findQuery = this.find();
+    query = this.validParameters({ title, author, content, isMatched });
+    if (title || author || content) {
+        findQuery = this.find().or(query);
+    }
 
     return {
-        count: this.find(query)
+        count: findQuery
             .then((boards) => boards.length)
             .catch(() => {
                 throw new ApolloError('INTERNER SERVER ERROR', 'INTERNER_SERVER_ERROR');
