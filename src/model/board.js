@@ -65,25 +65,6 @@ boardSchema.statics.addLike = function (_id) {
         });
 };
 
-boardSchema.statics.getSortedBoards = function (args) {
-    const { page, limit, sort } = {
-        page: args.page || 1,
-        limit: args.limit || 5,
-        sort: args.sort || 'seq',
-    };
-
-    const sortingField = Object.assign(this.sortingTypeMap.get(sort));
-
-    return this.find()
-        .sort(sortingField)
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .then((boards) => boards)
-        .catch(() => {
-            throw new ApolloError('INTERNER SERVER ERROR', 'INTERNER_SERVER_ERROR');
-        });
-};
-
 boardSchema.statics.validParameters = function (args) {
     const { title, author, content, isMatched } = args;
     let arr = [];
@@ -124,7 +105,7 @@ boardSchema.statics.searchBoards = function (args) {
     query = this.validParameters({ title, author, content, isMatched });
 
     if (title || author || content) {
-        findQuery = this.find().or(query);
+        findQuery = this.find().and(query);
     }
 
     return findQuery
@@ -148,7 +129,7 @@ boardSchema.statics.searchCount = function (args) {
     let findQuery = this.find();
     query = this.validParameters({ title, author, content, isMatched });
     if (title || author || content) {
-        findQuery = this.find().or(query);
+        findQuery = this.find().and(query);
     }
 
     return {
@@ -174,16 +155,6 @@ boardSchema.statics.updateBoard = function (args) {
                 parameter: '_id',
             });
         });
-};
-
-boardSchema.statics.getBoardsCount = function () {
-    return {
-        count: this.find()
-            .then((boards) => boards.length)
-            .catch(() => {
-                throw new ApolloError('INTERNER SERVER ERROR', 'INTERNER_SERVER_ERROR');
-            }),
-    };
 };
 
 boardSchema.statics.deleteBoardById = function (args) {
