@@ -17,13 +17,6 @@ const typeDefs = gql`
         seq: Int
         like: Int
     }
-
-    input BoardInput {
-        title: String
-        content: String
-        author: String
-        label: [label]
-    }
 `;
 
 export default typeDefs;
