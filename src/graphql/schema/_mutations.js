@@ -7,7 +7,6 @@ const typeDefs = gql`
         updateBoard(_id: ID!, title: String, content: String, label: [label]): Board
         addLike(_id: ID!): Board
         addDislike(_id: ID!): Board
-        addChat(message: String!): Chat
     }
 `;
 
