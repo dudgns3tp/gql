@@ -1,5 +1,16 @@
 # gql
 
+## Start apollo server
+```
+npm install
+```
+
+```
+npm start
+```
+
+
+
 ## GraphQL 용어 정리
 
 ### Over - fetching
